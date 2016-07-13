@@ -7,7 +7,8 @@ Installation
 -----
 
 Requires a working version of Kibana. The kibana configuration file (/opt/kibana/config/kibana.yml) should be updated
-with the following:
+with the following where keystone_port should be the keystone admin port (default: 35357) not the keystone member
+port (default: 5000):
 
 ```
 fts-keystone.port: ${keystone_port}
