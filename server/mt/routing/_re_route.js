@@ -12,26 +12,16 @@
  * the License.
  */
 
-module.exports = {
-  startsWith: startsWith,
-  requestPath: getRequestPath,
-  isESRequest: isESRequest
-};
+import utils from '../../util';
+import { PREFIX } from './_utils';
 
-function startsWith(str) {
-  var prefixes = Array.prototype.slice.call(arguments, 1);
-  for (var i = 0; i < prefixes.length; ++i) {
-    if (str.lastIndexOf(prefixes[i], 0) === 0) {
-      return true;
+module.exports = function reRoute(server) {
+  return (request, reply) => {
+    const requestPath = utils.requestPath(request);
+    if (utils.isESRequest(request)) {
+      server.log(['status', 'debug', 'keystone'], `Routing ${requestPath} onto ${PREFIX}${requestPath}`);
+      request.setUrl(`${PREFIX}${requestPath}`);
     }
-  }
-  return false;
-}
-
-function getRequestPath(request) {
-  return request.url.path;
-}
-
-function isESRequest(request) {
-  return startsWith(getRequestPath(request), '/elasticsearch');
-}
+    return reply.continue();
+  };
+};

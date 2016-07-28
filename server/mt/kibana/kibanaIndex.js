@@ -12,26 +12,18 @@
  * the License.
  */
 
-module.exports = {
-  startsWith: startsWith,
-  requestPath: getRequestPath,
-  isESRequest: isESRequest
+/**
+ * Returns tenant/project-aware kibana index
+ *
+ * @param server server object
+ * @param userObj user details as retrieved from keystone
+ * @returns {string} project aware kibana index
+ *
+ */
+export default (server, userObj) => {
+  return `${server.config().get('kibana.index')}-${getProjectId(userObj)}`;
 };
 
-function startsWith(str) {
-  var prefixes = Array.prototype.slice.call(arguments, 1);
-  for (var i = 0; i < prefixes.length; ++i) {
-    if (str.lastIndexOf(prefixes[i], 0) === 0) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function getRequestPath(request) {
-  return request.url.path;
-}
-
-function isESRequest(request) {
-  return startsWith(getRequestPath(request), '/elasticsearch');
+function getProjectId(userObj) {
+  return userObj.project.id;
 }

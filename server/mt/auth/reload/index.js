@@ -12,26 +12,6 @@
  * the License.
  */
 
-module.exports = {
-  startsWith: startsWith,
-  requestPath: getRequestPath,
-  isESRequest: isESRequest
-};
+const RELOAD = Symbol('reload-me');
 
-function startsWith(str) {
-  var prefixes = Array.prototype.slice.call(arguments, 1);
-  for (var i = 0; i < prefixes.length; ++i) {
-    if (str.lastIndexOf(prefixes[i], 0) === 0) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function getRequestPath(request) {
-  return request.url.path;
-}
-
-function isESRequest(request) {
-  return startsWith(getRequestPath(request), '/elasticsearch');
-}
+module.exports = RELOAD;

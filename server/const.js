@@ -12,26 +12,11 @@
  * the License.
  */
 
-module.exports = {
-  startsWith: startsWith,
-  requestPath: getRequestPath,
-  isESRequest: isESRequest
-};
+const NOW_TIME = (new Date().valueOf() / 1000);
 
-function startsWith(str) {
-  var prefixes = Array.prototype.slice.call(arguments, 1);
-  for (var i = 0; i < prefixes.length; ++i) {
-    if (str.lastIndexOf(prefixes[i], 0) === 0) {
-      return true;
-    }
-  }
-  return false;
-}
+export const SESSION_USER_KEY = `fts-keystone-user-${NOW_TIME}`;
+export const SESSION_TOKEN_KEY = `fts-keystone-token-${NOW_TIME}`;
+export const SESSION_PROJECTS_KEY = `fts-keystone-projects-${NOW_TIME}`;
+export const SESSION_TOKEN_CHANGED = `fts-keystone-token-changed-${NOW_TIME}`;
 
-function getRequestPath(request) {
-  return request.url.path;
-}
-
-function isESRequest(request) {
-  return startsWith(getRequestPath(request), '/elasticsearch');
-}
+export const TOKEN_CHANGED_VALUE = Symbol('token-changed');

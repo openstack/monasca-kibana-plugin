@@ -12,26 +12,27 @@
  * the License.
  */
 
-module.exports = {
-  startsWith: startsWith,
-  requestPath: getRequestPath,
-  isESRequest: isESRequest
+import kibanaIndex from './kibanaIndex';
+
+export default (server, userObj) => {
+  const indexName = kibanaIndex(server, userObj);
+  return exists(server, indexName)
+    .then((resp) => {
+      return {indexName, resp};
+    });
 };
 
-function startsWith(str) {
-  var prefixes = Array.prototype.slice.call(arguments, 1);
-  for (var i = 0; i < prefixes.length; ++i) {
-    if (str.lastIndexOf(prefixes[i], 0) === 0) {
-      return true;
-    }
+export function exists(server, indexName, status) {
+  const es = server.plugins.elasticsearch.client;
+  const opts = {
+    timeout            : '5s',
+    index              : indexName,
+    ignore             : [408],
+    waitForActiveShards: 1
+  };
+  if (status) {
+    opts.status = status;
   }
-  return false;
+  return es.cluster.health(opts);
 }
 
-function getRequestPath(request) {
-  return request.url.path;
-}
-
-function isESRequest(request) {
-  return startsWith(getRequestPath(request), '/elasticsearch');
-}

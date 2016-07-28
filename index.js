@@ -12,11 +12,12 @@
  * the License.
  */
 
-module.exports = (kibana) => {
+import session from './server/session';
+import binding from './server/binding';
+import healthCheck from './server/healthcheck';
 
-  const session = require('./server/session');
-  const proxy = require('./server/proxy');
-  const healthCheck = require('./server/healthcheck');
+export default (kibana) => {
+  const COOKIE_PASSWORD_SIZE = 32;
 
   return new kibana.Plugin({
     require: ['elasticsearch'],
@@ -27,17 +28,19 @@ module.exports = (kibana) => {
   function config(Joi) {
 
     const cookie = Joi.object({
+      name        : Joi.string()
+        .default('keystone'),
       password    : Joi.string()
-        .min(16)
-        .default(require('crypto').randomBytes(16).toString('hex')),
+        .min(COOKIE_PASSWORD_SIZE)
+        .default(require('crypto').randomBytes(COOKIE_PASSWORD_SIZE).toString('hex')),
       isSecure    : Joi.boolean()
-        .default(false),
+        .default(process.env.NODE_ENV !== 'development'),
       ignoreErrors: Joi.boolean()
         .default(true),
       expiresIn   : Joi.number()
         .positive()
         .integer()
-        .default(24 * 60 * 60 * 1000) // 1 day
+        .default(60 * 60 * 1000) // 1 hour
     }).default();
 
     return Joi.object({
@@ -51,9 +54,11 @@ module.exports = (kibana) => {
   }
 
   function init(server) {
-    session(server);
-    proxy(server);
+    server.log(['status', 'debug', 'keystone'], 'Initializing keystone plugin');
+    binding(server).start();
+    session(server).start();
     healthCheck(this, server).start();
+    server.log(['status', 'debug', 'keystone'], 'Initialized keystone plugin');
   }
 
 };
