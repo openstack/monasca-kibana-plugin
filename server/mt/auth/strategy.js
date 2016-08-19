@@ -16,6 +16,7 @@ import Boom from 'boom';
 import Promise from 'bluebird';
 
 import kibanaIndex from '../kibana';
+import defaultIndexPattern from '../kibana/defaultIndexPattern';
 import userProjects from '../projects';
 
 import {
@@ -40,6 +41,7 @@ export default (server) => {
         userProjects(server, session, userObj),
         kibanaIndex(server, userObj)
       ])
+      .then(defaultIndexPattern(server, userObj))
       .then(() => {
         server.log(['status', 'info', 'keystone'], `User ${userObj.user.id} authorized with keystone`);
         return token;

@@ -13,6 +13,7 @@ where keystone_port should be the keystone admin port (default: 35357) not the k
 fts-keystone.port: ${keystone_port}
 fts-keystone.url: http://${keystone_host}
 fts-keystone.enabled: True
+fts-keystone.defaultTimeField: '@timestamp'
 ```
 
 To install the fts-keystone plugin, first the latest release should be downloaded:

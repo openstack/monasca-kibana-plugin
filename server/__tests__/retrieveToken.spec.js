@@ -92,8 +92,6 @@ describe('plugins/fts-keystone', ()=> {
           chai.expect(token).not.to.be.undefined;
           chai.expect(token).to.be.eql(expectedToken);
 
-          console.log(yar.get.callCount);
-
           chai.expect(yar.get.callCount).to.be.eq(2);
           chai.expect(yar.set.calledOnce).not.to.be.ok;
           chai.expect(

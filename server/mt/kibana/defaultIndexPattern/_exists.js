@@ -12,27 +12,24 @@
  * the License.
  */
 
-import kibanaIndex from './kibanaIndex';
-
-export default (server, userObj) => {
-  const indexName = kibanaIndex(server, userObj);
-  return exists(server, indexName)
-    .then((resp) => {
-      return {indexName, resp};
-    });
-};
-
-export function exists(server, indexName, status) {
-  const es = server.plugins.elasticsearch.client;
-  const opts = {
-    timeout            : '5s',
-    index              : indexName,
-    ignore             : [408],
-    waitForActiveShards: 1
+export default (server, indexName) => {
+  const client = server.plugins.elasticsearch.client;
+  const options = {
+    index: indexName,
+    type : 'index-pattern',
+    ignoreUnavailable: true
   };
-  if (status) {
-    opts.waitForStatus = status;
-  }
-  return es.cluster.health(opts);
-}
 
+  server.log(['status', 'debug', 'keystone'],
+    `Checking if default index pattern for ${indexName} exists...`);
+
+  return client
+  .count(options)
+  .then((resp) => {
+    return resp.count > 0;
+  })
+  .catch((err)=> {
+    throw new Error(`Getting index-pattern for ${indexName} failed, error is ${err}`);
+  });
+
+};
