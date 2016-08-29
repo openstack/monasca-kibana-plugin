@@ -52,7 +52,6 @@ describe('plugins/fts-keystone', ()=> {
 
       server = {
         log   : sinon.stub(),
-        on    : sinon.stub(),
         config: function () {
           return {
             get: configGet
@@ -64,7 +63,6 @@ describe('plugins/fts-keystone', ()=> {
 
     it('should set status to green if keystone available', (done)=> {
       let expectedCode = 200;
-      let expectedStatus = true;
       let healthcheck = proxyRequire('../healthcheck', {
         'http': {
           request: (_, callback)=> {
@@ -84,8 +82,8 @@ describe('plugins/fts-keystone', ()=> {
 
       check
         .run()
-        .then((status) => {
-          chai.expect(expectedStatus).to.be.equal(status);
+        .then((code) => {
+          chai.expect(expectedCode).to.be.equal(code);
           chai.expect(plugin.status.green.calledWith('Ready')).to.be.ok;
         })
         .finally(done);
@@ -94,7 +92,6 @@ describe('plugins/fts-keystone', ()=> {
 
     it('should set status to red if keystone not available', (done) => {
       let expectedCode = 500;
-      let expectedStatus = false;
       let healthcheck = proxyRequire('../healthcheck', {
         'http': {
           request: (_, callback)=> {
@@ -114,8 +111,8 @@ describe('plugins/fts-keystone', ()=> {
 
       check
         .run()
-        .catch((status) => {
-          chai.expect(expectedStatus).to.be.equal(status);
+        .catch((code) => {
+          chai.expect(expectedCode).to.be.equal(code);
           chai.expect(plugin.status.red.calledWith('Unavailable')).to.be.ok;
         })
         .finally(done);

@@ -12,39 +12,34 @@
  * the License.
  */
 
-import yarCookie from 'yar';
-import multiTenancy from '../mt';
+module.exports = function initSession(server) {
 
-export default (server) => {
   const config = server.config();
-  return {
-    start: ()=> {
-      server.register({
-        register: yarCookie,
-        options : {
-          maxCookieSize: 4096,
-          name         : config.get('fts-keystone.cookie.name'),
-          storeBlank   : false,
-          cache        : {
-            expiresIn: config.get('fts-keystone.cookie.expiresIn')
-          },
-          cookieOptions: {
-            password    : config.get('fts-keystone.cookie.password'),
-            isSecure    : config.get('fts-keystone.cookie.isSecure'),
-            ignoreErrors: config.get('fts-keystone.cookie.ignoreErrors'),
-            clearInvalid: false
-          }
-        }
-      }, (error) => {
-        if (!error) {
-          server.log(['status', 'info', 'keystone'], 'Session registered');
-          multiTenancy.bind(server);
-        } else {
-          server.log(['status', 'error', 'keystone'], error);
-          throw error;
-        }
-      });
+  const registerOpts = {
+    register: require('yar'),
+    options : {
+      name         : 'kibana_session',
+      storeBlank   : false,
+      cache        : {
+        expiresIn: config.get('fts-keystone.cookie.expiresIn')
+      },
+      cookieOptions: {
+        password    : config.get('fts-keystone.cookie.password'),
+        isSecure    : config.get('fts-keystone.cookie.isSecure'),
+        ignoreErrors: config.get('fts-keystone.cookie.ignoreErrors'),
+        clearInvalid: true
+      }
     }
   };
 
+  const callback = (error) => {
+    if (!error) {
+      server.log(['session', 'debug'], 'Session registered');
+    } else {
+      server.log(['session', 'error'], error);
+      throw error;
+    }
+  };
+
+  server.register(registerOpts, callback);
 };

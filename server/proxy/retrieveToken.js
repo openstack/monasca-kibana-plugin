@@ -12,15 +12,10 @@
  * the License.
  */
 
-import Boom from 'boom';
-import {
-  SESSION_TOKEN_KEY,
-  SESSION_TOKEN_CHANGED,
-  TOKEN_CHANGED_VALUE
-} from '../../../const';
-import RELOAD_SYMBOL from '../reload';
+const Boom = require('boom');
 
-const HEADER_NAME = 'x-auth-token';
+/** @module */
+module.exports = retrieveToken;
 
 /**
  * Retrieves token from the response header using key <b>X-Keystone-Token</b>.
@@ -36,21 +31,21 @@ const HEADER_NAME = 'x-auth-token';
  *
  * @returns {string} current token value
  */
-module.exports = (server, request) => {
 
-  if (!request.yar || request.yar === null) {
-    server.log(['status', 'keystone', 'error'], 'Session is not enabled');
+const HEADER_NAME = 'x-auth-token';
+
+function retrieveToken(server, request) {
+
+  if (!request.session || request.session === null) {
+    server.log(['keystone', 'error'], 'Session is not enabled');
     throw new Error('Session support is missing');
   }
 
-  // DEV PURPOSE ONLY
-  // request.yar.set(SESSION_TOKEN_KEY, 'a60e832483c34526a0c2bc3c6f8fa320');
-
-  let tokenFromSession = request.yar.get(SESSION_TOKEN_KEY);
+  let tokenFromSession = request.session.get('keystone_token');
   let token = request.headers[HEADER_NAME];
 
   if (!token && !tokenFromSession) {
-    server.log(['status', 'keystone', 'error'],
+    server.log(['keystone', 'error'],
       'Token hasn\'t been located, looked in headers and session');
     return Boom.unauthorized(
       'You\'re not logged into the OpenStack. Please login via Horizon Dashboard'
@@ -59,28 +54,15 @@ module.exports = (server, request) => {
 
   if (!token && tokenFromSession) {
     token = tokenFromSession;
-    server.log(['status', 'debug', 'keystone'],
+    server.log(['keystone', 'debug'],
       'Token lookup status: Found token in session'
     );
   } else if ((token && !tokenFromSession) || (token !== tokenFromSession)) {
-    server.log(['status', 'debug', 'keystone'],
+    server.log(['keystone', 'debug'],
       'Token lookup status: Token located in header/session or token changed'
     );
-
-    if ((token !== tokenFromSession) && (token && tokenFromSession)) {
-      server.log(['status', 'info', 'keystone'],
-        'Reseting session because token has changed'
-      );
-      request.yar.reset();
-
-      request.yar.set(SESSION_TOKEN_CHANGED, TOKEN_CHANGED_VALUE);
-      request.yar.set(SESSION_TOKEN_KEY, token);
-
-      return RELOAD_SYMBOL;
-    }
-
-    request.yar.set(SESSION_TOKEN_KEY, token);
+    request.session.set('keystone_token', token);
   }
 
-  return request.yar.get(SESSION_TOKEN_KEY);
-};
+  return token;
+}

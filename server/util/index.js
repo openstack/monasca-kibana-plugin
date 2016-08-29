@@ -13,9 +13,7 @@
  */
 
 module.exports = {
-  startsWith: startsWith,
-  requestPath: getRequestPath,
-  isESRequest: isESRequest
+  startsWith: startsWith
 };
 
 function startsWith(str) {
@@ -26,12 +24,4 @@ function startsWith(str) {
     }
   }
   return false;
-}
-
-function getRequestPath(request) {
-  return request.url.path;
-}
-
-function isESRequest(request) {
-  return startsWith(getRequestPath(request), '/elasticsearch');
 }
