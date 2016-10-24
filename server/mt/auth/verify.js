@@ -42,7 +42,7 @@ export default () => {
 
       if (diff >= 0) {
         session.reset();
-        return reply(Boom.unauthorized('User token has expired')).takeover();
+        return reply(Boom.unauthorized('User token has expired'));
       } else {
         return reply.continue({
           credentials: userObj,

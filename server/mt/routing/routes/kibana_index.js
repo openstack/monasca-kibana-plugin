@@ -27,7 +27,7 @@ export default function (server, method, path) {
     method : method,
     path   : path,
     config : {
-      auth   : false,
+      auth   : 'session',
       payload: {
         output: 'data',
         parse : false
