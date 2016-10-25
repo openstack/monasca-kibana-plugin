@@ -43,6 +43,14 @@ module.exports = (server, request) => {
     throw new Error('Session support is missing');
   }
 
+  // this is a workaround for problem with 'default' session:
+  // when there is no session cookie present, then yar uses default session,
+  // as a result many clients use the same session - security risk!
+  const cookieName = server.config().get('fts-keystone.cookie.name');
+  if (!request.state[cookieName]) {
+    request.yar.reset();
+  }
+
   // DEV PURPOSE ONLY
   // request.yar.set(SESSION_TOKEN_KEY, 'a60e832483c34526a0c2bc3c6f8fa320');
 

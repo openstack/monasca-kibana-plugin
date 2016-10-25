@@ -46,7 +46,7 @@ function bindAuthScheme(server) {
     server.auth.strategy(
       'session',
       'keystone-token',
-      true,
+      false,
       require('./auth/strategy')(server)
     )
   ]);
