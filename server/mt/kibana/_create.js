@@ -36,6 +36,22 @@ export default (server, indexName) => {
                 index: 'not_analyzed'
               }
             }
+          },
+          'index-pattern': {
+            properties: {
+              title: {
+                type: 'string'
+              },
+              timeFieldName: {
+                type: 'string'
+              },
+              notExpandable: {
+                type: 'boolean'
+              },
+              intervalName: {
+                type: 'string'
+              }
+            }
           }
         }
       }

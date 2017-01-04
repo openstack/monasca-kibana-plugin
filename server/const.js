@@ -20,3 +20,8 @@ export const SESSION_PROJECTS_KEY = `fts-keystone-projects-${NOW_TIME}`;
 export const SESSION_TOKEN_CHANGED = `fts-keystone-token-changed-${NOW_TIME}`;
 
 export const TOKEN_CHANGED_VALUE = Symbol('token-changed');
+
+export const RELOAD_MARKUP = `<html>
+  <head><script type="text/javascript">window.location.reload();</script></head>
+  <body>reloading...</body>
+  </html>`;

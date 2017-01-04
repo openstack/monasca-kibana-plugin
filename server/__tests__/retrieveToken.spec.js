@@ -27,13 +27,22 @@ describe('plugins/fts-keystone', ()=> {
         let server;
 
         beforeEach(()=> {
+          let configGet = sinon.stub();
+          configGet.withArgs('fts-keystone.cookie.name').returns('keystone');
           server = {
-            log: sinon.stub()
+            log: sinon.stub(),
+            config: function () {
+              return {
+                get: configGet
+              };
+            }
           };
         });
 
         it('should return isBoom if session not available', ()=> {
-          let request = {};
+          let request = {
+            state: {}
+          };
           let errMsg = /Session support is missing/;
 
           chai.expect(()=> {
@@ -41,14 +50,16 @@ describe('plugins/fts-keystone', ()=> {
           }).to.throw(errMsg);
 
           request = {
-            yar: undefined
+            yar: undefined,
+            state: {}
           };
           chai.expect(()=> {
             retrieveToken(server, request);
           }).to.throw(errMsg);
 
           request = {
-            session: null
+            session: null,
+            state: {}
           };
           chai.expect(()=> {
             retrieveToken(server, request);
@@ -62,9 +73,11 @@ describe('plugins/fts-keystone', ()=> {
               'get': sinon
                 .stub()
                 .withArgs(CONSTANTS.SESSION_TOKEN_KEY)
-                .returns(undefined)
+                .returns(undefined),
+              'reset': sinon.stub()
             },
-            headers: {}
+            headers: {},
+            state: {}
           };
 
           let result = retrieveToken(server, request);
@@ -82,7 +95,8 @@ describe('plugins/fts-keystone', ()=> {
           };
           let request = {
             yar    : yar,
-            headers: {}
+            headers: {},
+            state: {}
           };
           let token;
 
@@ -91,8 +105,6 @@ describe('plugins/fts-keystone', ()=> {
           token = retrieveToken(server, request);
           chai.expect(token).not.to.be.undefined;
           chai.expect(token).to.be.eql(expectedToken);
-
-          console.log(yar.get.callCount);
 
           chai.expect(yar.get.callCount).to.be.eq(2);
           chai.expect(yar.set.calledOnce).not.to.be.ok;
@@ -104,7 +116,7 @@ describe('plugins/fts-keystone', ()=> {
         it('should set token in session if not there and request has it', () => {
           let expectedToken = 'SOME_RANDOM_TOKEN';
           let yar = {
-            'reset': sinon.spy(),
+            'reset': sinon.stub(),
             'set'  : sinon.spy(),
             'get'  : sinon.stub()
           };
@@ -112,7 +124,8 @@ describe('plugins/fts-keystone', ()=> {
             yar    : yar,
             headers: {
               'x-auth-token': expectedToken
-            }
+            },
+            state: {}
           };
           let token;
 
@@ -160,14 +173,15 @@ describe('plugins/fts-keystone', ()=> {
           let token;
           let request = {
             yar    : yar,
-            headers: headers
+            headers: headers,
+            state: {}
           };
 
           token = retrieveToken(server, request);
           chai.expect(token).to.not.be.undefined;
           chai.expect(token).to.be.eql(RELOAD_SYMBOL);
 
-          chai.expect(yar.reset.calledOnce).to.be.ok;
+          chai.expect(yar.reset.calledTwice).to.be.ok;
           chai.expect(yar.get.calledOnce).to.be.ok;
 
           chai.expect(yar.set.callCount).to.be.eq(2);

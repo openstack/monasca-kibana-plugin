@@ -19,6 +19,9 @@ module.exports = function defaultHandler(server, method, path) {
   return {
     method : method,
     path   : path,
+    config : {
+      auth : 'session'
+    },
     handler: {
       proxy: {
         mapUri     : (request, done) => {

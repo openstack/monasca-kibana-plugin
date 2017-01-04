@@ -49,6 +49,7 @@ export default (kibana) => {
         .uri({scheme: ['http', 'https']})
         .required(),
       port   : Joi.number().required(),
+      defaultTimeField: Joi.string().default('@timestamp'),
       cookie : cookie
     }).default();
   }

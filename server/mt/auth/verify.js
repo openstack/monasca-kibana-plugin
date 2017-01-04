@@ -18,9 +18,9 @@ import {
   SESSION_PROJECTS_KEY,
   SESSION_USER_KEY,
   SESSION_TOKEN_CHANGED,
-  TOKEN_CHANGED_VALUE
+  TOKEN_CHANGED_VALUE,
+  RELOAD_MARKUP
 } from '../../const';
-import reload from './reload';
 
 export default () => {
   return (request, reply) => {
@@ -34,7 +34,7 @@ export default () => {
         'Detected that token has been changed, replaying the request'
       );
       session.clear(SESSION_TOKEN_CHANGED);
-      return reply(reload.markup).type('text/html');
+      return reply(RELOAD_MARKUP).type('text/html');
     } else if (userObj) {
       let expiresAt = new Date(userObj.expires_at).valueOf();
       let now = new Date().valueOf();
@@ -42,7 +42,7 @@ export default () => {
 
       if (diff >= 0) {
         session.reset();
-        return reply(Boom.unauthorized('User token has expired')).takeover();
+        return reply(Boom.unauthorized('User token has expired'));
       } else {
         return reply.continue({
           credentials: userObj,

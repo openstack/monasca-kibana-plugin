@@ -13,6 +13,7 @@
  */
 
 import Wreck from 'wreck';
+import Boom from 'boom';
 
 import { SESSION_USER_KEY } from '../../../const';
 import { getOpts } from '../_utils';
@@ -20,14 +21,15 @@ import kibanaIndex from '../../kibana/kibanaIndex';
 import mapUri from '../_map_uri';
 
 export default function (server, method, path) {
-  const defaultKibanaIndex = defaultKibanaIndex;
+  const defaultKibanaIndex = server.config().get('kibana.index');
+  const logIndexPostionInUrl = 3;
 
   return {
     method : method,
     path   : path,
     config : {
       tags: ['elasticsearch', 'multitenancy'],
-      auth: false
+      auth: 'session'
     },
     handler: handler
   };
@@ -42,7 +44,11 @@ export default function (server, method, path) {
     if (indexPos > -1) {
       url[indexPos] = kibanaIndex(server, session[SESSION_USER_KEY]);
       kibanaIndexRequest = true;
+    } else if (url.length > logIndexPostionInUrl
+        && !url[logIndexPostionInUrl].startsWith(session[SESSION_USER_KEY].project.id)) {
+      return reply(Boom.unauthorized('User does not have access to this resource'));
     }
+
     url = url.join('/');
 
     const opts = getOpts(server, request, url);

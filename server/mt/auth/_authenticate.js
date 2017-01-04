@@ -15,14 +15,10 @@
 import Boom from 'boom';
 import Joi from 'joi';
 
-import { SESSION_USER_KEY } from '../../const';
+import { SESSION_USER_KEY, RELOAD_MARKUP } from '../../const';
 import lookupToken from './token';
 import RELOAD from './reload';
 
-const RELOAD_MARKUP = `<html>
-<head><script type="text/javascript">window.location.reload();</script></head>
-<body>reloading...</body>
-</html>`;
 const NOOP = ()=> {
 };
 const SCHEMA = {
