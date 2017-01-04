@@ -12,18 +12,19 @@
  * the License.
  */
 
-const Promise = require('bluebird');
-const url = require('url');
+import url from 'url';
+import Promise from 'bluebird';
 
-const util = require('../util/');
+import util from '../util';
 
-module.exports = function (plugin, server) {
-  let timeoutId;
-
+module.exports = function healthcheck(plugin, server) {
   const config = server.config();
   const keystoneUrl = config.get('fts-keystone.url');
   const keystonePort = config.get('fts-keystone.port');
   const request = getRequest();
+
+  let timeoutId;
+
   const service = {
     run      : check,
     start    : start,
@@ -33,22 +34,12 @@ module.exports = function (plugin, server) {
     }
   };
 
+  server.on('stop', stop);
+
   return service;
 
-  function getRequest() {
-    let required;
-    if (util.startsWith(keystoneUrl, 'https')) {
-      required = require('https');
-    } else {
-      required = require('http');
-    }
-    return required.request;
-  }
-
   function check() {
-
     return new Promise((resolve, reject)=> {
-
       const req = request({
         hostname: getHostname(),
         port    : keystonePort,
@@ -57,12 +48,13 @@ module.exports = function (plugin, server) {
         const statusCode = res.statusCode;
         if (statusCode >= 400) {
           plugin.status.red('Unavailable');
-          reject(statusCode);
+          reject(false);
         } else {
           plugin.status.green('Ready');
-          resolve(statusCode);
+          resolve(true);
         }
       });
+
       req.on('error', (error)=> {
         plugin.status.red('Unavailable: Failed to communicate with Keystone');
         server.log(['keystone', 'healthcheck', 'error'], `${error.message}`);
@@ -70,12 +62,7 @@ module.exports = function (plugin, server) {
       });
 
       req.end();
-
     });
-  }
-
-  function getHostname() {
-    return url.parse(keystoneUrl).hostname;
   }
 
   function start() {
@@ -107,6 +94,20 @@ module.exports = function (plugin, server) {
     timeoutId = currentId;
 
     return true;
+  }
+
+  function getHostname() {
+    return url.parse(keystoneUrl).hostname;
+  }
+
+  function getRequest() {
+    let required;
+    if (util.startsWith(keystoneUrl, 'https')) {
+      required = require('https');
+    } else {
+      required = require('http');
+    }
+    return required.request;
   }
 
 };

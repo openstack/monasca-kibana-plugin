@@ -12,26 +12,24 @@
  * the License.
  */
 
-module.exports = {
-  startsWith: startsWith,
-  requestPath: getRequestPath,
-  isESRequest: isESRequest
-};
+import mapUri from '../_map_uri';
+import createAgent from '../_create_agent';
 
-function startsWith(str) {
-  var prefixes = Array.prototype.slice.call(arguments, 1);
-  for (var i = 0; i < prefixes.length; ++i) {
-    if (str.lastIndexOf(prefixes[i], 0) === 0) {
-      return true;
+module.exports = function defaultHandler(server, method, path) {
+  return {
+    method : method,
+    path   : path,
+    handler: {
+      proxy: {
+        mapUri     : (request, done) => {
+          server.log(['status', 'debug', 'keystone'],
+            `mapUri for path ${request.path}`);
+          done(null, mapUri(server, request));
+        },
+        agent      : createAgent(server),
+        passThrough: true,
+        xforward   : true
+      }
     }
-  }
-  return false;
-}
-
-function getRequestPath(request) {
-  return request.url.path;
-}
-
-function isESRequest(request) {
-  return startsWith(getRequestPath(request), '/elasticsearch');
-}
+  };
+};

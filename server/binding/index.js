@@ -12,26 +12,20 @@
  * the License.
  */
 
-module.exports = {
-  startsWith: startsWith,
-  requestPath: getRequestPath,
-  isESRequest: isESRequest
-};
+import TokensApi from 'keystone-v3-client/lib/keystone/tokens';
+import UsersApi from 'keystone-v3-client/lib/keystone/users';
 
-function startsWith(str) {
-  var prefixes = Array.prototype.slice.call(arguments, 1);
-  for (var i = 0; i < prefixes.length; ++i) {
-    if (str.lastIndexOf(prefixes[i], 0) === 0) {
-      return true;
+module.exports = function binding(server) {
+  const config = server.config();
+  const keystoneCfg = {
+    url: `${config.get('fts-keystone.url')}:${config.get('fts-keystone.port')}`
+  };
+
+  return {
+    start: () => {
+      server.expose('tokens', new TokensApi(keystoneCfg));
+      server.expose('users', new UsersApi(keystoneCfg));
     }
-  }
-  return false;
-}
+  };
 
-function getRequestPath(request) {
-  return request.url.path;
-}
-
-function isESRequest(request) {
-  return startsWith(getRequestPath(request), '/elasticsearch');
-}
+};

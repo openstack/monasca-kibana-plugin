@@ -12,14 +12,12 @@
  * the License.
  */
 
-const proxy = require('./proxy');
+import Promise from 'bluebird';
+import reRoute from './_re_route';
 
-module.exports = function createProxy(server) {
-  server.ext(
-    'onPreAuth',
-    proxy(server),
-    {
-      after: ['yar']
-    }
-  );
+module.exports = function routing(server) {
+  return new Promise((resolve) => {
+    server.ext('onRequest', reRoute(server));
+    resolve(require('./_create_proxy'));
+  });
 };
