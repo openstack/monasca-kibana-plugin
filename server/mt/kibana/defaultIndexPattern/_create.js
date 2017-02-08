@@ -25,7 +25,7 @@ export default (server, indexName, userObj) => {
     type : 'index-pattern',
     body : {
       title: pattern,
-      timeFieldName : server.config().get('fts-keystone.defaultTimeField')
+      timeFieldName : server.config().get('monasca-kibana-plugin.defaultTimeField')
     },
     id   : pattern
   })

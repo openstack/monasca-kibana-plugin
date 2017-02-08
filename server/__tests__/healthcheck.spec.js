@@ -16,7 +16,7 @@ const sinon = require('sinon');
 const chai = require('chai');
 const proxyRequire = require('proxyquire');
 
-describe('plugins/fts-keystone', ()=> {
+describe('plugins/monasca-kibana-plugin', ()=> {
   describe('healthcheck', ()=> {
 
     const keystoneUrl = 'http://localhost';  // mocking http
@@ -38,7 +38,7 @@ describe('plugins/fts-keystone', ()=> {
 
     beforeEach(function () {
       plugin = {
-        name  : 'fts-keystone',
+        name  : 'monasca-kibana-plugin',
         status: {
           red   : sinon.stub(),
           green : sinon.stub(),
@@ -47,8 +47,8 @@ describe('plugins/fts-keystone', ()=> {
       };
 
       configGet = sinon.stub();
-      configGet.withArgs('fts-keystone.url').returns(keystoneUrl);
-      configGet.withArgs('fts-keystone.port').returns(keystonePort);
+      configGet.withArgs('monasca-kibana-plugin.url').returns(keystoneUrl);
+      configGet.withArgs('monasca-kibana-plugin.port').returns(keystonePort);
 
       server = {
         log   : sinon.stub(),

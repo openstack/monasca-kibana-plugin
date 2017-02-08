@@ -15,7 +15,7 @@
 const chai = require('chai');
 const util = require('../util');
 
-describe('plugins/fts-keystone', ()=> {
+describe('plugins/monasca-kibana-plugin', ()=> {
   describe('util', ()=> {
 
     const CHECK_STR = 'test.str';

@@ -29,7 +29,7 @@ const SCHEMA = {
 export default (server, opts) => {
   Joi.assert(opts, SCHEMA, 'Invalid keystone auth options');
 
-  const tokensApi = server.plugins['fts-keystone'].tokens;
+  const tokensApi = server.plugins['monasca-kibana-plugin'].tokens;
   const callbackOk = opts.tokenOk;
   const callbackBad = opts.tokenBad;
 

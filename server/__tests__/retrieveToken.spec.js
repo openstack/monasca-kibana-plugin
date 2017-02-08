@@ -19,7 +19,7 @@ const retrieveToken = require('../mt/auth/token');
 const CONSTANTS = require('../const');
 const RELOAD_SYMBOL = require('../mt/auth/reload');
 
-describe('plugins/fts-keystone', ()=> {
+describe('plugins/monasca-kibana-plugin', ()=> {
   describe('mt', ()=> {
     describe('auth', () => {
       describe('token', ()=> {
@@ -28,7 +28,7 @@ describe('plugins/fts-keystone', ()=> {
 
         beforeEach(()=> {
           let configGet = sinon.stub();
-          configGet.withArgs('fts-keystone.cookie.name').returns('keystone');
+          configGet.withArgs('monasca-kibana-plugin.cookie.name').returns('keystone');
           server = {
             log: sinon.stub(),
             config: function () {

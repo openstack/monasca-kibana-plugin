@@ -1,8 +1,8 @@
 {
-  "name":            "fts-keystone",
+  "name":            "monasca-kibana-plugin",
   "version":         "0.0.5",
-  "description":     "Keystone authentication & multitenancy support for Kibana 4.5.x",
-  "author":          "Fujitsu Enabling Software Technology GmbH",
+  "description":     "Keystone authentication & multitenancy support for Kibana 4.6.x",
+  "author":          "OpenStack",
   "license":         "Apache-2.0",
   "keywords":        [
     "kibana",
@@ -29,7 +29,7 @@
   },
   "repository":      {
     "type": "git",
-    "url":  "http://github.com/FujitsuEnablingSoftwareTechnologyGmbH/fts-keystone.git"
+    "url":  "https://github.com/openstack/monasca-kibana-plugin.git"
   },
   "devDependencies": {
     "babel-eslint":        "^4.1.8",

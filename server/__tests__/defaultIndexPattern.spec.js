@@ -16,7 +16,7 @@
 const chai = require('chai');
 const sinon = require('sinon');
 
-describe('plugins/fts-keystone', () => {
+describe('plugins/monasca-kibana-plugin', () => {
   const indexName = '.kibana-testdefaultindex';
   let server;
   let userObj;
@@ -26,7 +26,7 @@ describe('plugins/fts-keystone', () => {
   beforeEach(function () {
     configGet = sinon.stub();
     configGet.withArgs('pkg.version').returns('4.4.0');
-    configGet.withArgs('fts-keystone.defaultTimeField').returns('@timestamp');
+    configGet.withArgs('monasca-kibana-plugin.defaultTimeField').returns('@timestamp');
 
     server = {
       log   : sinon.stub(),

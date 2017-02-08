@@ -23,15 +23,15 @@ export default (server) => {
         register: yarCookie,
         options : {
           maxCookieSize: 4096,
-          name         : config.get('fts-keystone.cookie.name'),
+          name         : config.get('monasca-kibana-plugin.cookie.name'),
           storeBlank   : false,
           cache        : {
-            expiresIn: config.get('fts-keystone.cookie.expiresIn')
+            expiresIn: config.get('monasca-kibana-plugin.cookie.expiresIn')
           },
           cookieOptions: {
-            password    : config.get('fts-keystone.cookie.password'),
-            isSecure    : config.get('fts-keystone.cookie.isSecure'),
-            ignoreErrors: config.get('fts-keystone.cookie.ignoreErrors'),
+            password    : config.get('monasca-kibana-plugin.cookie.password'),
+            isSecure    : config.get('monasca-kibana-plugin.cookie.isSecure'),
+            ignoreErrors: config.get('monasca-kibana-plugin.cookie.ignoreErrors'),
             clearInvalid: false
           }
         }

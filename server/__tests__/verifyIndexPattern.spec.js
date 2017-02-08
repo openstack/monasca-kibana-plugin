@@ -18,7 +18,7 @@ const chai = require('chai');
 const CONSTANTS = require('../const');
 const verifyIndexPattern = require('../mt/verify/_verify_index_pattern');
 
-describe('plugins/fts-keystone', ()=> {
+describe('plugins/monasca-kibana-plugin', ()=> {
   describe('mt', ()=> {
     describe('verify', () => {
       describe('verify_index_pattern', () => {

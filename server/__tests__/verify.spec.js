@@ -18,7 +18,7 @@ const proxyRequire = require('proxyquire');
 
 const CONSTANTS = require('../const');
 
-describe('plugins/fts-keystone', ()=> {
+describe('plugins/monasca-kibana-plugin', ()=> {
   describe('mt', ()=> {
     describe('verify', () => {
 

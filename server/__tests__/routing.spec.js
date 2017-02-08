@@ -16,7 +16,7 @@ const sinon = require('sinon');
 const chai = require('chai');
 const proxyRequire = require('proxyquire');
 
-describe('plugins/fts-keystone', ()=> {
+describe('plugins/monasca-kibana-plugin', ()=> {
   describe('mt', ()=> {
     describe('routing', () => {
 

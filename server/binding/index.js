@@ -18,7 +18,7 @@ import UsersApi from 'keystone-v3-client/lib/keystone/users';
 module.exports = function binding(server) {
   const config = server.config();
   const keystoneCfg = {
-    url: `${config.get('fts-keystone.url')}:${config.get('fts-keystone.port')}`
+    url: `${config.get('monasca-kibana-plugin.url')}:${config.get('monasca-kibana-plugin.port')}`
   };
 
   return {
