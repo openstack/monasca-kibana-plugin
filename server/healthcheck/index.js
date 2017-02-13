@@ -19,8 +19,8 @@ import util from '../util';
 
 module.exports = function healthcheck(plugin, server) {
   const config = server.config();
-  const keystoneUrl = config.get('fts-keystone.url');
-  const keystonePort = config.get('fts-keystone.port');
+  const keystoneUrl = config.get('monasca-kibana-plugin.url');
+  const keystonePort = config.get('monasca-kibana-plugin.port');
   const request = getRequest();
 
   let timeoutId;

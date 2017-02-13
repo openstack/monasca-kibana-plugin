@@ -19,7 +19,7 @@ import { SESSION_PROJECTS_KEY, SESSION_TOKEN_KEY } from '../../const';
 
 export default (server, session, userObj) => {
 
-  const usersApi = server.plugins['fts-keystone'].users;
+  const usersApi = server.plugins['monasca-kibana-plugin'].users;
 
   return new Promise((resolve) => {
     return usersApi

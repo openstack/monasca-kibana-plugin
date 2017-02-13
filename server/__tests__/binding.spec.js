@@ -16,7 +16,7 @@ const sinon = require('sinon');
 const chai = require('chai');
 const proxyRequire = require('proxyquire');
 
-describe('fts-keystone', () => {
+describe('monasca-kibana-plugin', () => {
   describe('binding', () => {
 
     it('should expose tokens & users', () => {
