@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2016-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -19,9 +19,10 @@ import util from '../util';
 
 module.exports = function healthcheck(plugin, server) {
   const config = server.config();
-  const keystoneUrl = config.get('monasca-kibana-plugin.url');
-  const keystonePort = config.get('monasca-kibana-plugin.port');
+  const keystoneUrl = util.keystoneUrl(config);
   const request = getRequest();
+
+  server.log(['keystone', 'healthcheck', 'debug'], `keystone url is ${keystoneUrl}`);
 
   let timeoutId;
 
@@ -42,7 +43,7 @@ module.exports = function healthcheck(plugin, server) {
     return new Promise((resolve, reject)=> {
       const req = request({
         hostname: getHostname(),
-        port    : keystonePort,
+        port    : getPort(),
         method  : 'HEAD'
       }, (res)=> {
         const statusCode = res.statusCode;
@@ -98,6 +99,10 @@ module.exports = function healthcheck(plugin, server) {
 
   function getHostname() {
     return url.parse(keystoneUrl).hostname;
+  }
+
+  function getPort() {
+    return url.parse(keystoneUrl).port;
   }
 
   function getRequest() {

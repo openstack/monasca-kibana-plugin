@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2016-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -15,10 +15,16 @@
 import TokensApi from 'keystone-v3-client/lib/keystone/tokens';
 import UsersApi from 'keystone-v3-client/lib/keystone/users';
 
+import util from '../util';
+
 module.exports = function binding(server) {
   const config = server.config();
+  const url = util.keystoneUrl(config);
+
+  server.log(['keystone', 'binding', 'debug'], `keystone url is ${url}`);
+
   const keystoneCfg = {
-    url: `${config.get('monasca-kibana-plugin.url')}:${config.get('monasca-kibana-plugin.port')}`
+    url: url
   };
 
   return {

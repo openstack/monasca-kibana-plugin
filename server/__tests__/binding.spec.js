@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2016-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -19,15 +19,21 @@ const proxyRequire = require('proxyquire');
 describe('monasca-kibana-plugin', () => {
   describe('binding', () => {
 
-    it('should expose tokens & users', () => {
+    it('should expose tokens & users [url,port]', () => {
 
       let tokens = sinon.spy();
       let users = sinon.spy();
+      let configGet = sinon.stub();
+
+      configGet.withArgs('monasca-kibana-plugin.url').returns('http://localhost');
+      configGet.withArgs('monasca-kibana-plugin.port').returns(5000);
+      configGet.withArgs('monasca-kibana-plugin.auth_uri').returns(undefined);
 
       let server = {
         config: sinon.stub().returns({
-          get: sinon.spy()
+          get: configGet
         }),
+        log   : sinon.spy(),
         expose: sinon.spy()
       };
 
@@ -35,6 +41,39 @@ describe('monasca-kibana-plugin', () => {
         'keystone-v3-client/lib/keystone/tokens': tokens,
         'keystone-v3-client/lib/keystone/users' : users
       })(server).start();
+
+      chai.expect(configGet.callCount).to.be.eq(4);
+
+      chai.expect(server.expose.callCount).to.be.eq(2);
+      chai.expect(server.expose.calledWith('tokens', tokens));
+      chai.expect(server.expose.calledWith('users', users));
+
+    });
+
+    it('should expose tokens & users [auth_uri]', () => {
+
+      let tokens = sinon.spy();
+      let users = sinon.spy();
+      let configGet = sinon.stub();
+
+      configGet.withArgs('monasca-kibana-plugin.url').returns(undefined);
+      configGet.withArgs('monasca-kibana-plugin.port').returns(undefined);
+      configGet.withArgs('monasca-kibana-plugin.auth_uri').returns('http://localhost/identity_admin');
+
+      let server = {
+        config: sinon.stub().returns({
+          get: configGet
+        }),
+        log   : sinon.spy(),
+        expose: sinon.spy()
+      };
+
+      proxyRequire('../binding', {
+        'keystone-v3-client/lib/keystone/tokens': tokens,
+        'keystone-v3-client/lib/keystone/users' : users
+      })(server).start();
+
+      chai.expect(configGet.callCount).to.be.eq(3);
 
       chai.expect(server.expose.callCount).to.be.eq(2);
       chai.expect(server.expose.calledWith('tokens', tokens));

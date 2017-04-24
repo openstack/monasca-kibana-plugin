@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2016-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -15,8 +15,27 @@
 module.exports = {
   startsWith: startsWith,
   requestPath: getRequestPath,
-  isESRequest: isESRequest
+  isESRequest: isESRequest,
+  keystoneUrl: keystoneUrl
 };
+
+function keystoneUrl(config) {
+  const urlKey = 'monasca-kibana-plugin.url';
+  const portKey = 'monasca-kibana-plugin.port';
+  const authUriKey = 'monasca-kibana-plugin.auth_uri';
+
+  let url;
+
+  if (config.get(urlKey) && config.get(portKey)) {
+    url = `${config.get(urlKey)}:${config.get(portKey)}`;
+  } else if (config.get(authUriKey)) {
+    url = `${config.get(authUriKey)}`;
+  } else {
+    throw new Error(`Unexpected error, neither [${urlKey}, ${portKey}] nor ${authUriKey} found in config`);
+  }
+
+  return url;
+}
 
 function startsWith(str) {
   var prefixes = Array.prototype.slice.call(arguments, 1);
