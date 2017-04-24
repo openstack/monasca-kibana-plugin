@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2016-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -43,15 +43,30 @@ export default (kibana) => {
         .default(60 * 60 * 1000) // 1 hour
     }).default();
 
-    return Joi.object({
-      enabled: Joi.boolean().default(true),
-      url    : Joi.string()
-        .uri({scheme: ['http', 'https']})
-        .required(),
-      port   : Joi.number().required(),
-      defaultTimeField: Joi.string().default('@timestamp'),
-      cookie : cookie
-    }).default();
+    const deprecated_keystone = Joi.object({
+      url : Joi.string().uri({scheme: ['http', 'https']}),
+      port: Joi.number(),
+    })
+    .tags(['deprecated'])
+    .notes(['url,port settings have been deprecated in favour of auth_uri'])
+    .default();
+
+    const valid_keystone = Joi.object({
+      auth_uri: Joi.string().uri({scheme: ['http', 'https']})
+    })
+    .default();
+
+    return Joi
+        .object({
+            enabled: Joi.boolean().default(true),
+            defaultTimeField: Joi.string().default('@timestamp'),
+            cookie: cookie
+        })
+        .concat(deprecated_keystone)
+        .concat(valid_keystone)
+        .and('url', 'port')
+        .without('auth_uri', ['url', 'port'])
+        .default();
   }
 
   function init(server) {

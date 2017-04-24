@@ -1,6 +1,6 @@
 {
   "name":            "monasca-kibana-plugin",
-  "version":         "1.0.1",
+  "version":         "1.0.2",
   "description":     "Keystone authentication & multitenancy support for Kibana 4.6.x",
   "author":          "OpenStack",
   "license":         "Apache-2.0",
@@ -15,11 +15,12 @@
     "start":   "gulp dev",
     "build":   "gulp build",
     "package": "gulp package",
-    "test":    "gulp test"
+    "test":    "gulp test",
+    "lint":    "gulp lint"
   },
   "engines":         {
-    "node": "0.12.9",
-    "npm":  "2.14.3"
+    "node": "4.4.7",
+    "npm":  "2.15.8"
   },
   "main":            "gulpfile.js",
   "dependencies":    {
