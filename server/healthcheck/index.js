@@ -44,7 +44,7 @@ module.exports = function healthcheck(plugin, server) {
       const req = request({
         hostname: getHostname(),
         port    : getPort(),
-        method  : 'HEAD'
+        method  : 'GET'
       }, (res)=> {
         const statusCode = res.statusCode;
         if (statusCode >= 400) {
