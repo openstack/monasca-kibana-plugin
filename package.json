@@ -15,7 +15,8 @@
     "start":   "gulp dev",
     "build":   "gulp build",
     "package": "gulp package",
-    "test":    "gulp test"
+    "test":    "gulp test",
+    "lint":    "gulp lint"
   },
   "engines":         {
     "node": "4.4.7",
