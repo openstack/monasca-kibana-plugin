@@ -21,6 +21,7 @@ module.exports = function healthcheck(plugin, server) {
   const config = server.config();
   const keystoneUrl = util.keystoneUrl(config);
   const request = getRequest();
+  const requestParams = getRequestParams();
 
   server.log(['keystone', 'healthcheck', 'debug'], `keystone url is ${keystoneUrl}`);
 
@@ -41,11 +42,8 @@ module.exports = function healthcheck(plugin, server) {
 
   function check() {
     return new Promise((resolve, reject)=> {
-      const req = request({
-        hostname: getHostname(),
-        port    : getPort(),
-        method  : 'GET'
-      }, (res)=> {
+      const req = request(
+      requestParams, (res)=> {
         const statusCode = res.statusCode;
         if (statusCode >= 400) {
           plugin.status.red('Unavailable');
@@ -113,6 +111,21 @@ module.exports = function healthcheck(plugin, server) {
       required = require('http');
     }
     return required.request;
+  }
+
+  function getRequestParams() {
+    let params;
+
+    params = {
+      hostname: getHostname(),
+      port    : getPort(),
+      method  : 'GET'
+    };
+    if (util.startsWith(keystoneUrl, 'https')) {
+      params.rejectUnauthorized = false;
+    }
+
+    return params;
   }
 
 };
