@@ -1,6 +1,6 @@
 {
   "name":            "monasca-kibana-plugin",
-  "version":         "1.1.1",
+  "version":         "1.1.2",
   "description":     "Keystone authentication & multitenancy support for Kibana 4.6.x",
   "author":          "OpenStack",
   "license":         "Apache-2.0",
