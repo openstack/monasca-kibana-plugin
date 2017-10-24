@@ -1,0 +1,6 @@
+- project:
+    name: openstack/monasca-kibana-plugin
+    check:
+      jobs:
+        - monascalog-tempest:
+            voting: false
