@@ -41,11 +41,20 @@ export default function (server, method, path) {
     let kibanaIndexRequest = false;
 
     let indexPos = url.findIndex((item) => item === defaultKibanaIndex);
+    let logsIndexPref = server.config().get('monasca-kibana-plugin.logsIndexPrefix');
+    let eventsIndexPref = server.config().get('monasca-kibana-plugin.eventsIndexPrefix');
+    logsIndexPref = logsIndexPref.replace('<project_id>', session[SESSION_USER_KEY].project.id);
+    eventsIndexPref = eventsIndexPref.replace('<project_id>', session[SESSION_USER_KEY].project.id);
+
+    server.log(['status', 'info', 'keystone'],
+      `Allowing only these Index-Prefix ${logsIndexPref}, ${eventsIndexPref}`);
+
     if (indexPos > -1) {
       url[indexPos] = kibanaIndex(server, session[SESSION_USER_KEY]);
       kibanaIndexRequest = true;
     } else if (url.length > logIndexPostionInUrl
-        && !url[logIndexPostionInUrl].startsWith(session[SESSION_USER_KEY].project.id)) {
+        && !(url[logIndexPostionInUrl].startsWith(logsIndexPref)
+        || url[logIndexPostionInUrl].startsWith(eventsIndexPref))) {
       return reply(Boom.unauthorized('User does not have access to this resource'));
     }
 

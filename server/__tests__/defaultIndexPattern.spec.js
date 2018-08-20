@@ -27,6 +27,9 @@ describe('plugins/monasca-kibana-plugin', () => {
     configGet = sinon.stub();
     configGet.withArgs('pkg.version').returns('4.4.0');
     configGet.withArgs('monasca-kibana-plugin.defaultTimeField').returns('@timestamp');
+    configGet.withArgs('monasca-kibana-plugin.defaultEventsTimeField').returns('@timestamp');
+    configGet.withArgs('monasca-kibana-plugin.logsIndexPrefix').returns('logs-<project_id>');
+    configGet.withArgs('monasca-kibana-plugin.eventsIndexPrefix').returns('events-<project_id>');
 
     server = {
       log   : sinon.stub(),
@@ -53,44 +56,70 @@ describe('plugins/monasca-kibana-plugin', () => {
   });
 
   describe('defaultIndexPattern_exists', ()=> {
-    it('should return false if default pattern does not exist', (done) => {
-      let exists = require('../mt/kibana/defaultIndexPattern/_exists').default;
+    it('should return false if default logs index-pattern does not exist', (done) => {
+      let patternExists = require('../mt/kibana/defaultIndexPattern/_logs_exists').default;
 
-      let count = sinon.stub();
-      count.returns(Promise.resolve({ count: 0 }));
-      server.plugins.elasticsearch.client.count = count;
+      let exists = sinon.stub();
+      exists.returns(Promise.resolve(false));
+      server.plugins.elasticsearch.client.exists = exists;
 
-      exists(server, indexName)
+      patternExists(server, indexName, userObj)
         .then((resp) => {
           chai.assert.equal(resp, false);
-          chai.assert.isOk(count.calledOnce);
-          chai.assert.equal(count.args[0][0].index, '.kibana-testdefaultindex');
-          chai.assert.equal(count.args[0][0].type, 'index-pattern');
+          chai.assert.isOk(exists.calledOnce);
         })
         .then(done);
     });
 
-    it('should return true if default pattern already exists', (done) => {
-      let patternExists = require('../mt/kibana/defaultIndexPattern/_exists').default;
+    it('should return true if default logs index-pattern already exists', (done) => {
+      let patternExists = require('../mt/kibana/defaultIndexPattern/_logs_exists').default;
 
-      let count = sinon.stub();
-      count.returns(Promise.resolve({ count: 1 }));
-      server.plugins.elasticsearch.client.count = count;
+      let exists = sinon.stub();
+      exists.returns(Promise.resolve(true));
+      server.plugins.elasticsearch.client.exists = exists;
 
-      patternExists(server, indexName)
+      patternExists(server, indexName, userObj)
         .then((resp) => {
           chai.assert.equal(resp, true);
-          chai.assert.isOk(count.calledOnce);
-          chai.assert.equal(count.args[0][0].index, '.kibana-testdefaultindex');
-          chai.assert.equal(count.args[0][0].type, 'index-pattern');
+          chai.assert.isOk(exists.calledOnce);
+        })
+        .then(done);
+    });
+
+    it('should return false if default events index-pattern does not exist', (done) => {
+      let patternExists = require('../mt/kibana/defaultIndexPattern/_events_exists').default;
+
+      let exists = sinon.stub();
+      exists.returns(Promise.resolve(false));
+      server.plugins.elasticsearch.client.exists = exists;
+
+      patternExists(server, indexName, userObj)
+        .then((resp) => {
+          chai.assert.equal(resp, false);
+          chai.assert.isOk(exists.calledOnce);
+        })
+        .then(done);
+    });
+
+    it('should return true if default events index-pattern already exists', (done) => {
+      let patternExists = require('../mt/kibana/defaultIndexPattern/_events_exists').default;
+
+      let exists = sinon.stub();
+      exists.returns(Promise.resolve(true));
+      server.plugins.elasticsearch.client.exists = exists;
+
+      patternExists(server, indexName, userObj)
+        .then((resp) => {
+          chai.assert.equal(resp, true);
+          chai.assert.isOk(exists.calledOnce);
         })
         .then(done);
     });
   });
 
   describe('defaultIndexPattern_create', () => {
-    it('should create pattern with proper value', (done) => {
-      let createPattern = require('../mt/kibana/defaultIndexPattern/_create').default;
+    it('should create logs index-pattern with proper value', (done) => {
+      let createPattern = require('../mt/kibana/defaultIndexPattern/_logs_create').default;
 
       let create = sinon.stub();
       create.returns(Promise.resolve(true));
@@ -109,14 +138,50 @@ describe('plugins/monasca-kibana-plugin', () => {
           chai.assert.isOk(create.calledOnce);
           chai.assert.equal(create.args[0][0].index, '.kibana-testdefaultindex');
           chai.assert.equal(create.args[0][0].type, 'index-pattern');
-          chai.assert.equal(create.args[0][0].id, 'abcdef*');
-          chai.assert.equal(create.args[0][0].body.title, 'abcdef*');
+          chai.assert.equal(create.args[0][0].id, 'logs-abcdef*');
+          chai.assert.equal(create.args[0][0].body.title, 'logs-abcdef*');
           chai.assert.equal(create.args[0][0].body.timeFieldName, '@timestamp');
 
           chai.assert.isOk(update.calledOnce);
           chai.assert.equal(update.args[0][0].index, '.kibana-testdefaultindex');
           chai.assert.equal(update.args[0][0].type, 'config');
-          chai.assert.equal(update.args[0][0].body.doc.defaultIndex, 'abcdef*');
+          chai.assert.equal(update.args[0][0].body.doc.defaultIndex, 'logs-abcdef*');
+
+          chai.assert.isOk(refresh.called);
+          chai.assert.equal(refresh.args[0][0].index, '.kibana-testdefaultindex');
+        })
+        .then(done);
+    });
+
+    it('should create events index-pattern with proper value', (done) => {
+      let createPattern = require('../mt/kibana/defaultIndexPattern/_events_create').default;
+
+      let create = sinon.stub();
+      create.returns(Promise.resolve(true));
+      server.plugins.elasticsearch.client.create = create;
+
+      let update = sinon.stub();
+      update.returns(Promise.resolve(true));
+      server.plugins.elasticsearch.client.update = update;
+
+      let refresh = sinon.stub();
+      refresh.returns(Promise.resolve(true));
+      server.plugins.elasticsearch.client.indices.refresh = refresh;
+
+      createPattern(server, indexName, userObj)
+        .then((resp) => {
+          chai.assert.isOk(create.calledOnce);
+          chai.assert.equal(create.args[0][0].index, '.kibana-testdefaultindex');
+          chai.assert.equal(create.args[0][0].type, 'index-pattern');
+          console.log(create.args[0][0].id);
+          chai.assert.equal(create.args[0][0].id, 'events-abcdef*');
+          chai.assert.equal(create.args[0][0].body.title, 'events-abcdef*');
+          chai.assert.equal(create.args[0][0].body.timeFieldName, '@timestamp');
+
+          chai.assert.isOk(update.calledOnce);
+          chai.assert.equal(update.args[0][0].index, '.kibana-testdefaultindex');
+          chai.assert.equal(update.args[0][0].type, 'config');
+          chai.assert.equal(update.args[0][0].body.doc.defaultIndex, 'events-abcdef*');
 
           chai.assert.isOk(refresh.called);
           chai.assert.equal(refresh.args[0][0].index, '.kibana-testdefaultindex');

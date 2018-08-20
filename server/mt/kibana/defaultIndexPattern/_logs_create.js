@@ -15,11 +15,12 @@
 import Promise from 'bluebird';
 
 export default (server, indexName, userObj) => {
-  server.log(['status', 'info', 'keystone'], `Creating default index pattern for ${indexName}`);
+  server.log(['status', 'info', 'keystone'],
+    `Creating default logs-index pattern for ${indexName}`);
 
   const client = server.plugins.elasticsearch.client;
-  const pattern = `${userObj.project.id}*`;
-
+  const pattern = server.config().get('monasca-kibana-plugin.logsIndexPrefix')
+                  .replace('<project_id>', `${userObj.project.id}`) + '*';
   return client.create({
     index: indexName,
     type : 'index-pattern',
@@ -51,6 +52,6 @@ export default (server, indexName, userObj) => {
     return Promise.resolve(response);
   })
   .catch((err)=> {
-    throw new Error(`Unable to setup index pattern, error is ${err}`);
+    throw new Error(`Unable to setup logs-index pattern, error is ${err}`);
   });
 };

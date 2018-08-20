@@ -13,23 +13,71 @@
  */
 
 import Promise from 'bluebird';
-import defaultIndexExists from './_exists';
-import createDefaultIndex from './_create';
+import defaultLogsIndexExists from './_logs_exists';
+import defaultEventsIndexExists from './_events_exists';
+import createLogsDefaultIndex from './_logs_create';
+import createEventsDefaultIndex from './_events_create';
+import deleteLogsDefaultIndex from './_logs_delete';
+import deleteEventsDefaultIndex from './_events_delete';
 import kibanaIndex from '../kibanaIndex';
 
 export default (server, userObj) => {
   return () => {
     const indexName = kibanaIndex(server, userObj);
-    return defaultIndexExists(server, indexName)
-      .then((exists) => {
-        if (!exists) {
-          server.log(['status', 'warning', 'keystone'],
-            `Default index pattern for ${indexName} does not exist`);
-          return createDefaultIndex(server, indexName, userObj);
+    return defaultLogsIndexExists(server, indexName, userObj)
+      .then((logsExists) => {
+        if (server.config().get('monasca-kibana-plugin.logs')) {
+          server.log(['status', 'info', 'keystone'],
+            `Default logs-index pattern is enabled in kibana config file`);
+          if (!logsExists) {
+            server.log(['status', 'warning', 'keystone'],
+              `Default logs-index pattern for ${indexName} does not exist`);
+            return createLogsDefaultIndex(server, indexName, userObj);
+          } else {
+            server.log(['status', 'info', 'keystone'],
+              `Default logs-index pattern for ${indexName} already exists`);
+          }
+
+        } else {
+          server.log(['status', 'info', 'keystone'],
+            `Default logs-index pattern is disabled in kibana config file`);
+          if (logsExists) {
+            server.log(['status', 'warning', 'keystone'],
+              `Default logs-index pattern for ${indexName} exists, but it should not`);
+            return deleteLogsDefaultIndex(server, indexName, userObj);
+          } else {
+            server.log(['status', 'info', 'keystone'],
+              `Default logs-index pattern for ${indexName} does not exist`);
+          }
         }
-        server.log(['status', 'debug', 'keystone'],
-          `Default index pattern for ${indexName} already exists`);
-        return Promise.resolve();
+      })
+      .then(() => {
+        defaultEventsIndexExists(server, indexName, userObj)
+          .then((eventsExists) => {
+            if (server.config().get('monasca-kibana-plugin.events')) {
+              server.log(['status', 'info', 'keystone'],
+                `Default events-index pattern is enabled in kibana config file`);
+              if (!eventsExists) {
+                server.log(['status', 'warning', 'keystone'],
+                  `Default events-index pattern for ${indexName} does not exist`);
+                return createEventsDefaultIndex(server, indexName, userObj);
+              } else {
+                server.log(['status', 'info', 'keystone'],
+                  `Default events-index pattern for ${indexName} already exists`);
+              }
+            } else {
+              server.log(['status', 'info', 'keystone'],
+                `Default events-index pattern is disabled in kibana config file`);
+              if (eventsExists) {
+                server.log(['status', 'warning', 'keystone'],
+                  `Default events-index pattern for ${indexName} exists, but it should not`);
+                return deleteEventsDefaultIndex(server, indexName, userObj);
+              } else {
+                server.log(['status', 'info', 'keystone'],
+                  `Default events-index pattern for ${indexName} does not exist`);
+              }
+            }
+          });
       });
   };
 };

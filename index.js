@@ -59,7 +59,12 @@ export default (kibana) => {
     return Joi
         .object({
             enabled: Joi.boolean().default(true),
+            events: Joi.boolean().default(false),
+            logs: Joi.boolean().default(true),
             defaultTimeField: Joi.string().default('@timestamp'),
+            defaultEventsTimeField: Joi.string().default('@timestamp'),
+            logsIndexPrefix: Joi.string().default('logs-<project_id>'),
+            eventsIndexPrefix: Joi.string().default('events-<project_id>'),
             cookie: cookie
         })
         .concat(deprecated_keystone)
