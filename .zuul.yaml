@@ -1,4 +1,6 @@
 - project:
+    templates:
+      - nodejs4-jobs
     check:
       jobs:
         - monascalog-tempest:
