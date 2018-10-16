@@ -24,7 +24,12 @@ member port (default: 5000):
    monasca-kibana-plugin.port: ${keystone_port}
    monasca-kibana-plugin.url: http://${keystone_host}
    monasca-kibana-plugin.enabled: True
+   monasca-kibana-plugin.logs: True
+   monasca-kibana-plugin.events: True
    monasca-kibana-plugin.defaultTimeField: '@timestamp'
+   monasca-kibana-plugin.defaultEventsTimeField: '@timestamp'
+   monasca-kibana-plugin.logsIndexPrefix: 'logs-<project_id>'
+   monasca-kibana-plugin.eventsIndexPrefix: 'events-<project_id>'
 
 Then install using the Kibana plugin manager tool:
 

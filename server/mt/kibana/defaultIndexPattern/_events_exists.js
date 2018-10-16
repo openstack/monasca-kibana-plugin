@@ -12,24 +12,22 @@
  * the License.
  */
 
-export default (server, indexName) => {
+export default (server, indexName, userObj) => {
   const client = server.plugins.elasticsearch.client;
   const options = {
     index: indexName,
     type : 'index-pattern',
-    ignoreUnavailable: true
+    id : server.config().get('monasca-kibana-plugin.eventsIndexPrefix')
+         .replace('<project_id>', `${userObj.project.id}`) + '*',
   };
-
   server.log(['status', 'debug', 'keystone'],
-    `Checking if default index pattern for ${indexName} exists...`);
-
+    `Checking if default events-index pattern for ${indexName} exists...`);
   return client
-  .count(options)
+  .exists(options)
   .then((resp) => {
-    return resp.count > 0;
+    return resp;
   })
   .catch((err)=> {
-    throw new Error(`Getting index-pattern for ${indexName} failed, error is ${err}`);
+    throw new Error(`Getting events-index pattern for ${indexName} failed, error is ${err}`);
   });
-
 };
