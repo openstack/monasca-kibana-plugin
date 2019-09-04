@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2020 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -11,40 +11,37 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-
-import yarCookie from 'yar';
+import yarCookie from "@hapi/yar"
 import multiTenancy from '../mt';
+import {initClients} from "../mt/kibana/savedObjectsToolkit";
 
 export default (server) => {
   const config = server.config();
   return {
-    start: ()=> {
-      server.register({
-        register: yarCookie,
-        options : {
+    start: async () => {
+      await server.register({
+        plugin: yarCookie,
+        options: {
           maxCookieSize: 4096,
-          name         : config.get('monasca-kibana-plugin.cookie.name'),
-          storeBlank   : false,
-          cache        : {
+          name: config.get('monasca-kibana-plugin.cookie.name'),
+          storeBlank: false,
+          cache: {
             expiresIn: config.get('monasca-kibana-plugin.cookie.expiresIn')
           },
           cookieOptions: {
-            password    : config.get('monasca-kibana-plugin.cookie.password'),
-            isSecure    : config.get('monasca-kibana-plugin.cookie.isSecure'),
+            password: config.get('monasca-kibana-plugin.cookie.password'),
+            isSecure: config.get('monasca-kibana-plugin.cookie.isSecure'),
             ignoreErrors: config.get('monasca-kibana-plugin.cookie.ignoreErrors'),
             clearInvalid: false
           }
         }
-      }, (error) => {
-        if (!error) {
-          server.log(['status', 'info', 'keystone'], 'Session registered');
-          multiTenancy.bind(server);
-        } else {
-          server.log(['status', 'error', 'keystone'], error);
-          throw error;
-        }
+      }).catch((err) => {
+        throw new Error(err);
       });
+      server.log(['status', 'info', 'keystone'], 'Session registered');
+      initClients(server);
+      await multiTenancy.bind(server);
+
     }
   };
-
 };

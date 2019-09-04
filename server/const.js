@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2020 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -21,7 +21,8 @@ export const SESSION_TOKEN_CHANGED = `monasca-kibana-plugin-token-changed-${NOW_
 
 export const TOKEN_CHANGED_VALUE = Symbol('token-changed');
 
-export const RELOAD_MARKUP = `<html>
-  <head><script type="text/javascript">window.location.reload();</script></head>
-  <body>reloading...</body>
-  </html>`;
+export const RELOAD_MARKUP = `
+<html>
+<head><script src="#" type="text/javascript">window.location.reload();</script></head>
+<body>reloading...</body>
+</html>`;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2020 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -38,7 +38,8 @@ const HEADER_NAME = 'x-auth-token';
  */
 module.exports = (server, request) => {
 
-  if (!request.yar || request.yar === null) {
+
+  if (!request.yar) {
     server.log(['status', 'keystone', 'error'], 'Session is not enabled');
     throw new Error('Session support is missing');
   }

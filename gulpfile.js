@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2020 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -32,12 +32,12 @@ var pkg = require('./package.json');
 var packageName = pkg.name + '-' + pkg.version;
 
 // relative location of Kibana install
-var pathToKibana = '../kibana';
+var pathToKibana = '../../kibana';
 
 var buildDir = path.resolve(__dirname, 'build');
 var targetDir = path.resolve(__dirname, 'target');
 var buildTarget = path.resolve(buildDir, pkg.name);
-var kibanaPluginDir = path.resolve(__dirname, pathToKibana, 'installedPlugins', pkg.name);
+var kibanaPluginDir = path.resolve(__dirname, pathToKibana, 'plugins', pkg.name);
 
 var exclude = [
   '.git',

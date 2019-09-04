@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2020 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -20,14 +20,17 @@ module.exports = function defaultHandler(server, method, path) {
     method : method,
     path   : path,
     config : {
-      auth : 'session'
+      auth : 'keystone-session'
     },
     handler: {
       proxy: {
-        mapUri     : (request, done) => {
+        mapUri     : (request) => {
+          server.log(['route-handler-default'], request.url.path);
           server.log(['status', 'debug', 'keystone'],
-            `mapUri for path ${request.path}`);
-          done(null, mapUri(server, request));
+            `mapUri for path ${request.url.path}`);
+          return {
+            uri: mapUri(server, request)
+          };
         },
         agent      : createAgent(server),
         passThrough: true,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2020 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -23,10 +23,10 @@ import { PREFIX } from './_utils';
 
 export default (server, request) => {
   const config = server.config();
-  const path = request.path.replace(`${PREFIX}/elasticsearch`, '');
+  const path = request.path.replace(`${PREFIX}`, '').replace(`/elasticsearch`, '');
   const query = querystring.stringify(request.query);
 
-  let url = config.get('elasticsearch.url');
+  let url = config.get('monasca-kibana-plugin.elasticsearch.url');
 
   if (path) {
     if (/\/$/.test(url)) {

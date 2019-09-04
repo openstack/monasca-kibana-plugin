@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2020 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -12,16 +12,17 @@
  * the License.
  */
 
-import utils from '../../util';
+import {isRouted, requestPath} from '../../util';
 import { PREFIX } from './_utils';
 
 module.exports = function reRoute(server) {
   return (request, reply) => {
-    const requestPath = utils.requestPath(request);
-    if (utils.isESRequest(request)) {
-      server.log(['status', 'debug', 'keystone'], `Routing ${requestPath} onto ${PREFIX}${requestPath}`);
-      request.setUrl(`${PREFIX}${requestPath}`);
+    const path = requestPath(request);
+    if (isRouted(request)) {
+      server.log(['status', 'debug', 'keystone'], `Routing ${path} onto ${PREFIX}${path}`);
+      request.setUrl(`${PREFIX}${path}`);
     }
-    return reply.continue();
+    return reply.continue;
   };
 };
+

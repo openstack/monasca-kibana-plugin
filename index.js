@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 FUJITSU LIMITED
+ * Copyright 2020 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -56,6 +56,11 @@ export default (kibana) => {
     })
     .default();
 
+    //Elasticsearch parameter added due to the fact that retrieving elasticsearch url via server.config() is impossible
+    const elasticsearch = Joi.object({
+      url: Joi.string().uri({scheme: ['http', 'https']})
+    }).default();
+
     return Joi
         .object({
             enabled: Joi.boolean().default(true),
@@ -65,7 +70,8 @@ export default (kibana) => {
             defaultEventsTimeField: Joi.string().default('@timestamp'),
             logsIndexPrefix: Joi.string().default('logs-<project_id>'),
             eventsIndexPrefix: Joi.string().default('events-<project_id>'),
-            cookie: cookie
+            cookie: cookie,
+            elasticsearch: elasticsearch
         })
         .concat(deprecated_keystone)
         .concat(valid_keystone)
@@ -74,12 +80,11 @@ export default (kibana) => {
         .default();
   }
 
-  function init(server) {
-    server.log(['status', 'debug', 'keystone'], 'Initializing keystone plugin');
+  async function init(server) {
+    server.log(['MKP','status', 'debug', 'keystone'], 'Initializing keystone plugin');
     binding(server).start();
-    session(server).start();
+    await session(server).start();
     healthCheck(this, server).start();
-    server.log(['status', 'debug', 'keystone'], 'Initialized keystone plugin');
+    server.log(['MKP','status', 'debug', 'keystone'], 'Initialized keystone plugin');
   }
-
 };

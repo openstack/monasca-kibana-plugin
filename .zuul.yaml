@@ -1,7 +1,7 @@
 - project:
-    templates:
-      - nodejs4-jobs
     check:
       jobs:
-        - monascalog-python3-tempest:
-            voting: false
+        - monasca-tempest-log-python3-influxdb
+    gate:
+      jobs:
+        - monasca-tempest-log-python3-influxdb

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 FUJITSU LIMITED
+ * Copyright 2020 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -36,7 +36,7 @@ module.exports = function healthcheck(plugin, server) {
     }
   };
 
-  server.on('stop', stop);
+  server.events.on('stop', stop);
 
   return service;
 
@@ -105,7 +105,7 @@ module.exports = function healthcheck(plugin, server) {
 
   function getRequest() {
     let required;
-    if (util.startsWith(keystoneUrl, 'https')) {
+    if (keystoneUrl.startsWith('https')) {
       required = require('https');
     } else {
       required = require('http');
@@ -121,7 +121,7 @@ module.exports = function healthcheck(plugin, server) {
       port    : getPort(),
       method  : 'GET'
     };
-    if (util.startsWith(keystoneUrl, 'https')) {
+    if (keystoneUrl.startsWith('https')) {
       params.rejectUnauthorized = false;
     }
 

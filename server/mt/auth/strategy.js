@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2020 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -15,7 +15,6 @@
 import Boom from 'boom';
 import Promise from 'bluebird';
 
-import kibanaIndex from '../kibana';
 import defaultIndexPattern from '../kibana/defaultIndexPattern';
 import userProjects from '../projects';
 
@@ -36,11 +35,7 @@ export default (server) => {
     session.set(SESSION_TOKEN_KEY, token);
     session.set(SESSION_USER_KEY, userObj);
 
-    return Promise
-      .all([
-        userProjects(server, session, userObj),
-        kibanaIndex(server, userObj)
-      ])
+    return userProjects(server, session, userObj)
       .then(defaultIndexPattern(server, userObj))
       .then(() => {
         server.log(['status', 'info', 'keystone'], `User ${userObj.user.id} authorized with keystone`);
@@ -49,7 +44,7 @@ export default (server) => {
       .catch(err => {
         server.log(['status', 'info', 'keystone'],
           `Error caught in process of authorization, err was ${err}`);
-        throw err;
+        throw new Error(err);
       });
   }
 
@@ -63,13 +58,11 @@ export default (server) => {
       if (error.statusCode === 401) {
         err = Boom.forbidden('\You\'re not logged in as a user who\'s authorized to access log information');
       } else {
-        err = Boom.internal(
-          error.message || 'Unexpected error during Keystone communication',
-          {},
+        err = Boom.internal(error.message || 'Unexpected error during Keystone communication',
           error.statusCode
         );
       }
-      return resolve(err);
+      resolve(err);
     });
   }
 

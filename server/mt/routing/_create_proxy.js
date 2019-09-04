@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2020 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -16,27 +16,36 @@ import { PREFIX } from './_utils';
 
 module.exports = (server, method, route) => {
 
-  const serverConfig = server.config();
   const pre = '/elasticsearch';
   const sep = route[0] === '/' ? '' : '/';
-  const path = `${PREFIX}${pre}${sep}${route}`;
+  let path;
+  if (/\/api.*\//.test(route)) {
+    path = `${PREFIX}${sep}${route}`;
+  } else {
+    path = `${PREFIX}${pre}${sep}${route}`;
+  }
+
+  server.log(['create-proxy-path'], path + '; ' + method);
 
   let options;
 
   switch (route) {
-    case '/_mget':
-      options = require('./routes/mget')(server, method, path);
+    case '/_search':
+      options = require('./routes/search')(server, method, path);
       break;
-    case '/{paths*}':
-      options = require('./routes/paths')(server, method, path);
+    case '/{search_pattern}/_search':
+      options = require('./routes/pattern_search')(server, method, path);
+      break;
+    case '/api/saved_objects/_bulk_get':
+      options = require('./routes/bulk_get')(server, method, path);
       break;
     default:
-      if (route === `/${serverConfig.get('kibana.index')}/{paths*}`) {
-        options = require('./routes/kibana_index')(server, method, path);
+      if (/\/api.*\/saved_objects\/_find/.test(route)) {
+        options = require('./routes/find')(server, method, path);
       } else {
         options = require('./routes/default')(server, method, path);
       }
+      break;
   }
-
   return server.route(options);
 };

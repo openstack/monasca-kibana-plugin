@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2020 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -12,28 +12,25 @@
  * the License.
  */
 
-export default  {
+export default {
   bind: (server) => {
     server.log(['status', 'info', 'keystone'], 'Registering keystone-auth schema');
     return Promise.all([
       bindAuthScheme(server),
-      bindExt(server),
       bindRouting(server)
     ]);
   }
 };
 
+//I suppose the handler that would prevent user from deleting his default index pattern should be implemented as well
 function bindRouting(server) {
-  const kibanaIndex = server.config().get('kibana.index');
   return require('./routing')(server)
-    .then((route)=> {
-      route(server, 'GET', '/{paths*}');
-      route(server, 'POST', '/_mget');
-      route(server, 'POST', '/{index}/_search');
-      route(server, 'POST', '/{index}/_field_stats');
-      route(server, 'POST', '/_msearch');
-      route(server, 'POST', '/_search/scroll');
-      route(server, ['PUT', 'POST', 'DELETE'], '/' + kibanaIndex + '/{paths*}');
+    .then((route) => {
+      route(server, ['GET', 'POST'], '/{paths*}');
+      route(server, ['GET', 'POST'], '/{search_pattern}/_search');
+      route(server, 'GET', '/api/saved_objects/_find');
+      route(server, 'GET', '/api/kibana/management/saved_objects/_find');
+      route(server, 'POST', '/api/saved_objects/_bulk_get');
     });
 }
 
@@ -44,21 +41,11 @@ function bindAuthScheme(server) {
       require('./auth/scheme')
     ),
     server.auth.strategy(
-      'session',
+      'keystone-session',
       'keystone-token',
-      false,
       require('./auth/strategy')(server)
     )
   ]);
 }
 
-function bindExt(server) {
-  return Promise.all([
-    server.ext(
-      'onPreAuth',
-      require('./auth/verify')(server),
-      {after: ['yar']}
-    ),
-    server.ext('onRequest', require('./verify')(server))
-  ]);
-}
+//bindExt is removed due to verify being a part of authentication scheme and the other one was no longer relevant

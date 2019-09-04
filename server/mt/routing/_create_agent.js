@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2020 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -27,7 +27,8 @@ const readFile = (file) => fs.readFileSync(file, 'utf8');
 
 module.exports = memoize(function (server) {
   const config = server.config();
-  const target = url.parse(config.get('elasticsearch.url'));
+
+  const target = url.parse(config.get('monasca-kibana-plugin.elasticsearch.url'));
 
   if (!/^https/.test(target.protocol)) {
     return new http.Agent();

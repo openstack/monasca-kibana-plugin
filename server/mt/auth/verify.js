@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FUJITSU LIMITED
+ * Copyright 2020 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -15,26 +15,24 @@
 import Boom from 'boom';
 
 import {
-  SESSION_PROJECTS_KEY,
   SESSION_USER_KEY,
   SESSION_TOKEN_CHANGED,
   TOKEN_CHANGED_VALUE,
   RELOAD_MARKUP
 } from '../../const';
 
-export default () => {
-  return (request, reply) => {
+export default (server) => {
+  return async (request, reply) => {
 
     let session = request.yar;
     let userObj = session.get(SESSION_USER_KEY);
     let tokenChanged = session.get(SESSION_TOKEN_CHANGED);
 
     if (tokenChanged === TOKEN_CHANGED_VALUE) {
-      request.log(['status', 'info', 'keystone'],
-        'Detected that token has been changed, replaying the request'
-      );
+      //TODO: This part doesn't really have any effect now because Kibana won't allow HTML injection
+      server.log(['status', 'info', 'keystone'], 'Detected that token has been changed, replaying the request');
       session.clear(SESSION_TOKEN_CHANGED);
-      return reply(RELOAD_MARKUP).type('text/html');
+      return reply.response(RELOAD_MARKUP).type('text/html');
     } else if (userObj) {
       let expiresAt = new Date(userObj.expires_at).valueOf();
       let now = new Date().valueOf();
@@ -44,19 +42,17 @@ export default () => {
         session.reset();
         return reply(Boom.unauthorized('User token has expired'));
       } else {
-        return reply.continue({
+        request.yar.set({
           credentials: userObj,
-          artifacts  : {
-            projects: session.get(SESSION_PROJECTS_KEY)
-          },
-          log        : {
+          log: {
             tags: 'keystone ok'
           }
         });
+        return reply.continue;
       }
     }
 
     // TODO(trebskit) should actually throw error here I guess
-    return reply.continue();
-  };
+    return reply.continue;
+  }
 };

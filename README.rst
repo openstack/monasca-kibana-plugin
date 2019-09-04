@@ -1,15 +1,26 @@
 Monasca Kibana plugin
 =====================
 
-Keystone authentication support and multi-tenancy for Kibana 4.6.x
+Keystone authentication support and multi-tenancy for Kibana 7.3.x
 
 Build
 -----
 
+After installing Node JS 10.15.2 and yarn, do the following to
+initiate Kibana development environment.
+
 ::
 
-   npm install
-   npm run package
+  git clone https://github.com/elastic/kibana --branch 7.3
+  cd kibana
+
+Clone the plugin to plugins/ inside the environment and run.
+
+::
+
+  yarn kbn bootstrap
+  cd plugins/monasca-kibana-plugin
+  yarn build
 
 Installation
 ------------
@@ -35,9 +46,9 @@ Then install using the Kibana plugin manager tool:
 
 ::
 
-   $ /opt/kibana/bin/kibana plugin --install monasca-kibana-plugin --url file:///tmp/monasca-kibana-plugin-0.0.1.tar.gz
+   $ /opt/kibana/bin/kibana-plugin install file:///tmp/kibana/plugins/monasca-kibana-plugin/build/monasca-kibana-plugin-7.3.0.zip
    Installing monasca-kibana-plugin
-   Attempting to transfer from file:///tmp/monasca-kibana-plugin-0.0.1.tar.gz
+   Attempting to transfer from file:///tmp/kibana/plugins/monasca-kibana-plugin/build/monasca-kibana-plugin-7.3.0.zip
    Transferring 7567007 bytes....................
    Transfer complete
    Extracting plugin archive
@@ -45,11 +56,16 @@ Then install using the Kibana plugin manager tool:
    Optimizing and caching browser bundles...
    Plugin installation complete
 
-   $ /opt/kibana/bin/kibana plugin --list
-   monasca-kibana-plugin
+   $ /opt/kibana/bin/kibana-plugin list
+   monasca-kibana-plugin@7.3.0
 
 Now start/restart your Kibana server by running:
 
 ::
 
    $ service kibana restart
+
+
+Valuable resources:
+- Kibana plugin notes - https://github.com/nreese/kibana-plugin-notes
+- Elastic forum - https://discuss.elastic.co

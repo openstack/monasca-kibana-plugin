@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 FUJITSU LIMITED
+ * Copyright 2020 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -13,9 +13,8 @@
  */
 
 module.exports = {
-  startsWith: startsWith,
   requestPath: getRequestPath,
-  isESRequest: isESRequest,
+  isRouted: isRoutedRequest,
   keystoneUrl: keystoneUrl
 };
 
@@ -37,20 +36,19 @@ function keystoneUrl(config) {
   return url;
 }
 
-function startsWith(str) {
-  var prefixes = Array.prototype.slice.call(arguments, 1);
-  for (var i = 0; i < prefixes.length; ++i) {
-    if (str.lastIndexOf(prefixes[i], 0) === 0) {
-      return true;
-    }
-  }
-  return false;
-}
-
 function getRequestPath(request) {
   return request.url.path;
 }
 
 function isESRequest(request) {
-  return startsWith(getRequestPath(request), '/elasticsearch');
+  return getRequestPath(request).startsWith('/elasticsearch');
 }
+
+function isSavedObjectsRequest(request) {
+  return /\/api.*\/saved_objects\/_/.test(getRequestPath(request));
+}
+
+function isRoutedRequest(request) {
+  return isESRequest(request) || isSavedObjectsRequest(request);
+}
+
