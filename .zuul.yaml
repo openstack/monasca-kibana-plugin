@@ -3,7 +3,5 @@
       - nodejs4-jobs
     check:
       jobs:
-        - monascalog-python2-tempest:
-            voting: false
         - monascalog-python3-tempest:
             voting: false
