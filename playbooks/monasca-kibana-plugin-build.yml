@@ -1,0 +1,9 @@
+---
+- hosts: all
+  tasks:
+    - name: Build monasca-kibana-plugin
+      shell: "{{ zuul.project.src_dir }}/build_monasca_kibana_plugin.sh"
+      environment:
+        MONASCA_COMMON_TAG: "{{ zuul.tag if zuul.pipeline == 'release' else zuul.branch | basename }}"
+        KIBANA_PATH: "/home/zuul/src/github.com/elastic/kibana"
+      become: true

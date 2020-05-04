@@ -13,7 +13,7 @@
  */
 
 import {bulkGetSavedObjects} from '../../kibana/savedObjectsToolkit';
-import getAllowedPatterns from '../../kibana/defaultIndexPattern/_get_allowed_patterns'
+import getAllowedPatterns from '../../kibana/defaultIndexPattern/_get_allowed_patterns';
 import {SESSION_USER_KEY} from '../../../const';
 
 export default function (server, method, path) {

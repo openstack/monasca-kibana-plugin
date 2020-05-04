@@ -11,9 +11,9 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-import yarCookie from "@hapi/yar"
+import yarCookie from '@hapi/yar';
 import multiTenancy from '../mt';
-import {initClients} from "../mt/kibana/savedObjectsToolkit";
+import {initClients} from '../mt/kibana/savedObjectsToolkit';
 
 export default (server) => {
   const config = server.config();

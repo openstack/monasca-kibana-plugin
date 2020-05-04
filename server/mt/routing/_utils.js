@@ -13,7 +13,7 @@
  */
 
 import createAgent from './_create_agent';
-import {bulkGetSavedObjects} from "../kibana/savedObjectsToolkit";
+import {bulkGetSavedObjects} from '../kibana/savedObjectsToolkit';
 
 export const PREFIX = '/mt';
 
@@ -92,7 +92,7 @@ function isAllowedSavedObject(element, patterns) {
 function isAllowedDashboard(element, patterns) {
 
   const dashboardRefs = element.references.map((el) => {
-    return {id: el.id, type: el.type}
+    return {id: el.id, type: el.type};
   });
 
   return bulkGetSavedObjects(dashboardRefs)

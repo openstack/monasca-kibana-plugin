@@ -12,7 +12,7 @@
  * the License.
  */
 
-import {find} from "../savedObjectsToolkit";
+import {find} from '../savedObjectsToolkit';
 
 export async function defaultLogsIndexExists(server, userObj) {
   const pattern = server.config().get('monasca-kibana-plugin.logsIndexPrefix')

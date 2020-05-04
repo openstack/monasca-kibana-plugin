@@ -54,5 +54,5 @@ export default (server) => {
 
     // TODO(trebskit) should actually throw error here I guess
     return reply.continue;
-  }
+  };
 };

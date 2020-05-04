@@ -43,18 +43,18 @@ export default (kibana) => {
         .default(60 * 60 * 1000) // 1 hour
     }).default();
 
-    const deprecated_keystone = Joi.object({
+    const deprecatedKeystone = Joi.object({
       url : Joi.string().uri({scheme: ['http', 'https']}),
       port: Joi.number(),
     })
-    .tags(['deprecated'])
-    .notes(['url,port settings have been deprecated in favour of auth_uri'])
-    .default();
+      .tags(['deprecated'])
+      .notes(['url,port settings have been deprecated in favour of auth_uri'])
+      .default();
 
-    const valid_keystone = Joi.object({
+    const validKeystone = Joi.object({
       auth_uri: Joi.string().uri({scheme: ['http', 'https']})
     })
-    .default();
+      .default();
 
     //Elasticsearch parameter added due to the fact that retrieving elasticsearch url via server.config() is impossible
     const elasticsearch = Joi.object({
@@ -62,22 +62,22 @@ export default (kibana) => {
     }).default();
 
     return Joi
-        .object({
-            enabled: Joi.boolean().default(true),
-            events: Joi.boolean().default(false),
-            logs: Joi.boolean().default(true),
-            defaultTimeField: Joi.string().default('@timestamp'),
-            defaultEventsTimeField: Joi.string().default('@timestamp'),
-            logsIndexPrefix: Joi.string().default('logs-<project_id>'),
-            eventsIndexPrefix: Joi.string().default('events-<project_id>'),
-            cookie: cookie,
-            elasticsearch: elasticsearch
-        })
-        .concat(deprecated_keystone)
-        .concat(valid_keystone)
-        .and('url', 'port')
-        .without('auth_uri', ['url', 'port'])
-        .default();
+      .object({
+        enabled: Joi.boolean().default(true),
+        events: Joi.boolean().default(false),
+        logs: Joi.boolean().default(true),
+        defaultTimeField: Joi.string().default('@timestamp'),
+        defaultEventsTimeField: Joi.string().default('@timestamp'),
+        logsIndexPrefix: Joi.string().default('logs-<project_id>'),
+        eventsIndexPrefix: Joi.string().default('events-<project_id>'),
+        cookie: cookie,
+        elasticsearch: elasticsearch
+      })
+      .concat(deprecatedKeystone)
+      .concat(validKeystone)
+      .and('url', 'port')
+      .without('auth_uri', ['url', 'port'])
+      .default();
   }
 
   async function init(server) {

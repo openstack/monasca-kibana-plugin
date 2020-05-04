@@ -2,6 +2,14 @@
     check:
       jobs:
         - monasca-tempest-log-python3-influxdb
+        - build-monasca-kibana-plugin
     gate:
       jobs:
         - monasca-tempest-log-python3-influxdb
+- job:
+    name: build-monasca-kibana-plugin
+    run: playbooks/monasca-kibana-plugin-build.yml
+    required-projects:
+      - openstack/monasca-kibana-plugin
+      - elastic/kibana
+    attempts: 1

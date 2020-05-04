@@ -55,7 +55,7 @@ function _createMetaForSavedObject(object, version) {
         title: `Advanced Settings [${version}]`,
         inAppUrl: {
           path: `${inAppPrefix}${managementPrefix}/settings`,
-          uiCapabilitiesPath: "advancedSettings.show"
+          uiCapabilitiesPath: 'advancedSettings.show'
         }
       };
       break;
@@ -66,7 +66,7 @@ function _createMetaForSavedObject(object, version) {
         editUrl: `${managementPrefix}/index_patterns/${object.title}`,
         inAppUrl: {
           path: `${inAppPrefix}${managementPrefix}/index_patterns/${object.id}`,
-          uiCapabilitiesPath: "management.kibana.index_patterns"
+          uiCapabilitiesPath: 'management.kibana.index_patterns'
         }
       };
       break;
@@ -77,7 +77,7 @@ function _createMetaForSavedObject(object, version) {
         editUrl: `${managementPrefix}/objects/savedSearches/${object.id}`,
         inAppUrl: {
           path: `${inAppPrefix}/discover/${object.id}`,
-          uiCapabilitiesPath: "discover.show"
+          uiCapabilitiesPath: 'discover.show'
         }
       };
       break;
@@ -88,7 +88,7 @@ function _createMetaForSavedObject(object, version) {
         editUrl: `${managementPrefix}/objects/savedVisualizations/${object.id}`,
         inAppUrl: {
           path: `${inAppPrefix}/visualize/edit/${object.id}`,
-          uiCapabilitiesPath: "visualize.show"
+          uiCapabilitiesPath: 'visualize.show'
         }
       };
       break;
@@ -99,7 +99,7 @@ function _createMetaForSavedObject(object, version) {
         editUrl: `${managementPrefix}/objects/savedDashboards/${object.id}`,
         inAppUrl: {
           path: `${inAppPrefix}/dashboard/${object.id}`,
-          uiCapabilitiesPath: "dashboard.show"
+          uiCapabilitiesPath: 'dashboard.show'
         }
       };
       break;

@@ -13,7 +13,7 @@
  */
 
 import {findWithMeta} from '../../kibana/savedObjectsToolkit';
-import {filterResponse} from "../_utils";
+import {filterResponse} from '../_utils';
 import {SESSION_USER_KEY} from '../../../const';
 import getAllowedPatterns from '../../kibana/defaultIndexPattern/_get_allowed_patterns';
 
@@ -38,7 +38,7 @@ export default function (server, method, path) {
     }
     return findWithMeta(server, params)
       .then((response) => {
-        return filterResponse(response, patterns, server)
+        return filterResponse(response, patterns, server);
       })
       .then((response) => {
         response.total = response.saved_objects.length;

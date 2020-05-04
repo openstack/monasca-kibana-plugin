@@ -12,10 +12,10 @@
  * the License.
  */
 
-import {createEventsIndexPattern, createLogsIndexPattern} from "./_create";
-import {defaultEventsIndexExists, defaultLogsIndexExists} from "./_exists";
-import {deleteDefaultEventsIndex, deleteDefaultLogsIndex} from "./_delete";
-import {updateEventsConfig, updateLogsConfig} from "./_set_default_index_pattern";
+import {createEventsIndexPattern, createLogsIndexPattern} from './_create';
+import {defaultEventsIndexExists, defaultLogsIndexExists} from './_exists';
+import {deleteDefaultEventsIndex, deleteDefaultLogsIndex} from './_delete';
+import {updateEventsConfig, updateLogsConfig} from './_set_default_index_pattern';
 
 export default (server, userObj) => {
   return () => {
@@ -24,7 +24,7 @@ export default (server, userObj) => {
       .then((logsExists) => {
         if (server.config().get('monasca-kibana-plugin.logs')) {
           server.log(['status', 'info', 'keystone'],
-            `Default logs-index pattern is enabled in kibana config file`);
+            'Default logs-index pattern is enabled in kibana config file');
           if (!logsExists) {
             server.log(['status', 'warning', 'keystone'],
               `Default logs-index pattern for ${project} does not exist`);
@@ -38,7 +38,7 @@ export default (server, userObj) => {
           }
         } else {
           server.log(['status', 'info', 'keystone'],
-            `Default logs-index pattern is disabled in kibana config file`);
+            'Default logs-index pattern is disabled in kibana config file');
           if (logsExists) {
             server.log(['status', 'warning', 'keystone'],
               `Default logs-index pattern for ${project} exists, but it should not`);
@@ -54,13 +54,13 @@ export default (server, userObj) => {
           .then((eventsExists) => {
             if (server.config().get('monasca-kibana-plugin.events')) {
               server.log(['status', 'info', 'keystone'],
-                `Default events-index pattern is enabled in kibana config file`);
+                'Default events-index pattern is enabled in kibana config file');
               if (!eventsExists) {
                 server.log(['status', 'warning', 'keystone'],
                   `Default events-index pattern for ${project} does not exist`);
                 return createEventsIndexPattern(server, userObj)
                   .then(() => {
-                    return updateEventsConfig(server, userObj)
+                    return updateEventsConfig(server, userObj);
                   });
               } else {
                 server.log(['status', 'info', 'keystone'],
@@ -68,7 +68,7 @@ export default (server, userObj) => {
               }
             } else {
               server.log(['status', 'info', 'keystone'],
-                `Default events-index pattern is disabled in kibana config file`);
+                'Default events-index pattern is disabled in kibana config file');
               if (eventsExists) {
                 server.log(['status', 'warning', 'keystone'],
                   `Default events-index pattern for ${project} exists, but it should not`);
@@ -78,7 +78,7 @@ export default (server, userObj) => {
                   `Default events-index pattern for ${project} does not exist`);
               }
             }
-          })
-      })
+          });
+      });
   };
 };

@@ -43,16 +43,16 @@ module.exports = function healthcheck(plugin, server) {
   function check() {
     return new Promise((resolve, reject)=> {
       const req = request(
-      requestParams, (res)=> {
-        const statusCode = res.statusCode;
-        if (statusCode >= 400) {
-          plugin.status.red('Unavailable');
-          reject(false);
-        } else {
-          plugin.status.green('Ready');
-          resolve(true);
-        }
-      });
+        requestParams, (res)=> {
+          const statusCode = res.statusCode;
+          if (statusCode >= 400) {
+            plugin.status.red('Unavailable');
+            reject(false);
+          } else {
+            plugin.status.green('Ready');
+            resolve(true);
+          }
+        });
 
       req.on('error', (error)=> {
         plugin.status.red('Unavailable: Failed to communicate with Keystone');

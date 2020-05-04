@@ -13,7 +13,7 @@
  */
 
 
-import {updateConfig} from "../savedObjectsToolkit";
+import {updateConfig} from '../savedObjectsToolkit';
 
 export async function updateLogsConfig(server, userObj) {
   const pattern = server.config().get('monasca-kibana-plugin.logsIndexPrefix')

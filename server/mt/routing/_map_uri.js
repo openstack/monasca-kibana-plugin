@@ -23,7 +23,7 @@ import { PREFIX } from './_utils';
 
 export default (server, request) => {
   const config = server.config();
-  const path = request.path.replace(`${PREFIX}`, '').replace(`/elasticsearch`, '');
+  const path = request.path.replace(`${PREFIX}`, '').replace('/elasticsearch', '');
   const query = querystring.stringify(request.query);
 
   let url = config.get('monasca-kibana-plugin.elasticsearch.url');
