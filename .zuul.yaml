@@ -6,6 +6,7 @@
     gate:
       jobs:
         - monasca-tempest-log-python3-influxdb
+        - build-monasca-kibana-plugin
 - job:
     name: build-monasca-kibana-plugin
     run: playbooks/monasca-kibana-plugin-build.yml
